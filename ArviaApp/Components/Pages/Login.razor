@@ -1,0 +1,25 @@
+@page "/"
+@layout Layout.EmptyLayout
+
+<div class="page-container">
+    
+    <div class="white-header-section">
+        <img src="images/Arvia.png" alt="Arvia Logo" style="width: 380px; height: auto; object-fit: contain;" />
+    </div>
+
+    <div class="content-section">
+        <h1 class="arvia-title" style="font-size: 2rem;">Login</h1>
+        <p class="arvia-subtitle">Sign in to continue</p>
+
+        <input type="text" class="arvia-input" placeholder="Name" />
+        <input type="password" class="arvia-input" placeholder="Password" />
+
+        <a href="/dashboard" class="arvia-btn-primary" style="text-decoration:none; text-align:center; display: block; box-sizing: border-box;">
+            Log In
+        </a>
+
+        <div class="arvia-link">
+            No Account? <a href="/register">register</a>
+        </div>
+    </div>
+</div>

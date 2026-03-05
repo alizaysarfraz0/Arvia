@@ -1,0 +1,33 @@
+@page "/camera"
+@layout Layout.EmptyLayout
+<div class="page-container" style="background-color: var(--arvia-green-dark);">
+    <div class="camera-header">
+        <a href="/dashboard" style="color: var(--arvia-white); text-decoration: none;">← Back</a>
+        <h2 style="color: var(--arvia-white); margin: 0;">AI Scanner</h2>
+        <div style="width: 40px;"></div> </div>
+
+    <div class="camera-view-container">
+        <div class="camera-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            <p>Camera Active</p>
+        </div>
+
+        <div class="ai-bubble pop-in" style="top: 20%; left: 15%;">
+            <span>Leaf Spot Detected</span>
+        </div>
+         <div class="ai-bubble pop-in" style="top: 60%; right: 20%; animation-delay: 0.5s;">
+            <span>Checking Soil Texture...</span>
+        </div>
+    </div>
+
+    <div class="ai-results-panel">
+        <div class="result-item">
+            <span class="result-label">Soil Type Detected:</span>
+            <span class="result-value">Loamy Sand</span>
+        </div>
+        <div class="result-item warning">
+            <span class="result-label">Plant Disease:</span>
+            <span class="result-value">Early Blight Signs</span>
+        </div>
+    </div>
+</div>

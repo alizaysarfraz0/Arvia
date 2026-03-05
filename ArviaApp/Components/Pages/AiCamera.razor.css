@@ -1,0 +1,84 @@
+.camera-header {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--arvia-green-light);
+}
+
+.camera-view-container {
+    position: relative;
+    width: 100%;
+    height: 50vh;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.camera-placeholder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #ccc;
+}
+
+.ai-bubble {
+    position: absolute;
+    background-color: #023210;
+    padding: 0.8rem 1.2rem;
+    border-radius: 30px;
+    color: var(--arvia-green-light);
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    opacity: 0; 
+}
+
+/* Animation for bubbles popping in */
+.pop-in {
+    animation: popInAnimation 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popInAnimation {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.ai-results-panel {
+    flex-grow: 1;
+    background-color: var(--arvia-white);
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    padding: 2rem;
+    margin-top: -20px; 
+    position: relative;
+    z-index: 10;
+}
+
+.result-item {
+    margin-bottom: 1.5rem;
+}
+
+.result-label {
+    display: block;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.3rem;
+}
+
+.result-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--arvia-green-light);
+}
+
+.result-item.warning .result-value {
+    color: #b3cd7e; 
+}

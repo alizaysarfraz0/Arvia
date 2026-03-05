@@ -1,0 +1,135 @@
+/* _content/ArviaApp/Components/Pages/AiCamera.razor.rz.scp.css */
+.camera-header[b-5ivjuwy2zc] {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--arvia-green-light);
+}
+
+.camera-view-container[b-5ivjuwy2zc] {
+    position: relative;
+    width: 100%;
+    height: 50vh;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.camera-placeholder[b-5ivjuwy2zc] {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #ccc;
+}
+
+.ai-bubble[b-5ivjuwy2zc] {
+    position: absolute;
+    background-color: #023210;
+    padding: 0.8rem 1.2rem;
+    border-radius: 30px;
+    color: var(--arvia-green-light);
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    opacity: 0; 
+}
+
+/* Animation for bubbles popping in */
+.pop-in[b-5ivjuwy2zc] {
+    animation: popInAnimation-b-5ivjuwy2zc 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popInAnimation-b-5ivjuwy2zc {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.ai-results-panel[b-5ivjuwy2zc] {
+    flex-grow: 1;
+    background-color: var(--arvia-white);
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    padding: 2rem;
+    margin-top: -20px; 
+    position: relative;
+    z-index: 10;
+}
+
+.result-item[b-5ivjuwy2zc] {
+    margin-bottom: 1.5rem;
+}
+
+.result-label[b-5ivjuwy2zc] {
+    display: block;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.3rem;
+}
+
+.result-value[b-5ivjuwy2zc] {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--arvia-green-light);
+}
+
+.result-item.warning .result-value[b-5ivjuwy2zc] {
+    color: #b3cd7e; 
+}
+/* _content/ArviaApp/Components/Pages/Dashboard.razor.rz.scp.css */
+.sensor-grid[b-ftj58s8n3b] {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 2rem;
+}
+
+.sensor-card[b-ftj58s8n3b] {
+    background-color: var(--arvia-green-dark);
+    padding: 1.5rem;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--arvia-green-light);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.sensor-label[b-ftj58s8n3b] {
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.sensor-value[b-ftj58s8n3b] {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.recommendations-panel[b-ftj58s8n3b] {
+    width: 100%;
+    max-width: 400px;
+    background-color: var(--arvia-green-medium);
+    padding: 1.5rem;
+    border-radius: 20px;
+    color: var(--arvia-green-light);
+}
+
+.recommendations-panel ul[b-ftj58s8n3b] {
+    padding-left: 1.2rem;
+}
+
+.recommendations-panel li[b-ftj58s8n3b] {
+    margin-bottom: 0.8rem;
+    line-height: 1.4;
+}

@@ -1,0 +1,61 @@
+@page "/dashboard"
+@using ArviaApp.Services
+@layout Layout.EmptyLayout
+
+@inject ISensorService SensorService
+
+<div class="page-container" style="background-color: var(--arvia-white);">
+    <div class="content-section">
+        <h1 class="arvia-title">Garden Status</h1>
+        <p class="arvia-subtitle">Real-time sensor readings</p>
+
+        @if (reading == null)
+        {
+            <p style="color: var(--arvia-green-dark);">Reading sensors...</p>
+        }
+        else
+        {
+            <div class="sensor-grid">
+                <div class="sensor-card">
+                    <span class="sensor-label">pH Level</span>
+                    <span class="sensor-value">@reading.PHLevel.ToString("0.0")</span>
+                </div>
+                <div class="sensor-card">
+                    <span class="sensor-label">Humidity</span>
+                    <span class="sensor-value">@reading.HumidityPercent.ToString("0")%</span>
+                </div>
+                <div class="sensor-card">
+                    <span class="sensor-label">Moisture</span>
+                    <span class="sensor-value">@reading.SoilMoisturePercent.ToString("0")%</span>
+                </div>
+                <div class="sensor-card">
+                    <span class="sensor-label">Temp</span>
+                    <span class="sensor-value">@reading.TemperatureCelsius.ToString("0")°C</span>
+                </div>
+            </div>
+
+            <div class="recommendations-panel">
+                <h3 class="arvia-title">Insights & Actions</h3>
+                <ul>
+                    @foreach (var rec in reading.Recommendations)
+                    {
+                        <li>@rec</li>
+                    }
+                </ul>
+            </div>
+        }
+
+       <a href="/camera" class="arvia-btn-primary" style="text-decoration:none; text-align:center; margin-top: 2rem; margin-bottom: 2rem;">
+    Open AI Scanner
+          </a>
+    </div>
+</div>
+
+@code {
+    private SensorReading? reading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        reading = await SensorService.GetLatestReadingAsync();
+    }
+}

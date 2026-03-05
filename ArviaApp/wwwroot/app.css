@@ -1,0 +1,116 @@
+
+:root {
+    --arvia-green-light: #b3cd7e; /* Main buttons, text */
+    --arvia-green-dark: #4c823a; /* Input backgrounds */
+    --arvia-green-medium: #659854; /* Main background */
+    --arvia-white: #023210;
+    
+    --arvia-font: 'Poppins', sans-serif;
+    --arvia-radius: 30px;
+}
+
+html, body {
+    font-family: var(--arvia-font);
+    background-color: var(--arvia-green-medium);
+    color: var(--arvia-green-light);
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--arvia-green-medium);
+    
+}
+
+.white-header-section {
+    background-color: transparent; 
+    padding: 4rem 1rem 0rem 1rem; /* Changed bottom padding to 0 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+
+
+.torn-separator path {
+    fill: var(--arvia-green-medium);
+}
+
+.content-section {
+    padding: 0rem 2rem 2rem 2rem; /* Changed top padding to 0 */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Shared UI Elements */
+.arvia-title {
+    font-weight: 700;
+    color: var(--arvia-green-light);
+    margin-top: 0; /* Changed top margin to 0 */
+    margin-bottom: 0.5rem;
+}
+
+.arvia-subtitle {
+    color: var(--arvia-green-light);
+    opacity: 0.8;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+.arvia-input {
+    width: 100%;
+    max-width: 350px;
+    background-color: var(--arvia-green-dark);
+    border: none;
+    border-radius: var(--arvia-radius);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: var(--arvia-green-light);
+    font-family: var(--arvia-font);
+    font-weight: 500;
+    outline: none;
+}
+
+.arvia-input::placeholder {
+    color: var(--arvia-green-light);
+    opacity: 0.7;
+}
+
+.arvia-btn-primary {
+    width: 100%;
+    max-width: 350px;
+    background-color: var(--arvia-green-light);
+    color: var(--arvia-white);
+    border: none;
+    border-radius: var(--arvia-radius);
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 1rem;
+}
+
+.arvia-btn-primary:hover {
+    background-color: #244a3a;
+}
+
+.arvia-link {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.arvia-link a {
+    color: var(--arvia-green-light);
+    text-decoration: none;
+    font-weight: 700;
+}
