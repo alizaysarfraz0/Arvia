@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ArviaApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9db1d0d9fc2d747706abcfcc773476269324523b")]
 [assembly: System.Reflection.AssemblyProductAttribute("ArviaApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ArviaApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

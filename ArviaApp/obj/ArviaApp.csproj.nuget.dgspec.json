@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\aliza\\OneDrive\\Desktop\\Arvia\\ArviaApp\\ArviaApp\\ArviaApp.csproj": {}
+    "C:\\Users\\aliza\\OneDrive\\Desktop\\Arvia\\ArviaApp\\ArviaApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\aliza\\OneDrive\\Desktop\\Arvia\\ArviaApp\\ArviaApp\\ArviaApp.csproj": {
+    "C:\\Users\\aliza\\OneDrive\\Desktop\\Arvia\\ArviaApp\\ArviaApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\aliza\\OneDrive\\Desktop\\Arvia\\ArviaApp\\ArviaApp\\ArviaApp.csproj",
+        "projectUniqueName": "C:\\Users\\aliza\\OneDrive\\Desktop\\Arvia\\ArviaApp\\ArviaApp.csproj",
         "projectName": "ArviaApp",
-        "projectPath": "C:\\Users\\aliza\\OneDrive\\Desktop\\Arvia\\ArviaApp\\ArviaApp\\ArviaApp.csproj",
+        "projectPath": "C:\\Users\\aliza\\OneDrive\\Desktop\\Arvia\\ArviaApp\\ArviaApp.csproj",
         "packagesPath": "C:\\Users\\aliza\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\aliza\\OneDrive\\Desktop\\Arvia\\ArviaApp\\ArviaApp\\obj\\",
+        "outputPath": "C:\\Users\\aliza\\OneDrive\\Desktop\\Arvia\\ArviaApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
