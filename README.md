@@ -10,15 +10,15 @@ This is a final year project for my bachelors in software engineeering.
 
 3. The Front-End of the application was created using React.
 
-![Arvia soil prediction result](ArviaApplication.png)
+![Arvia Application](Images/ArviaApplication.png)
 
 4. Dataset was downloaded through kaggle and was augmented with the code entered in the augmentation file.
 
 5. The VGG16 model was trained for the soil type, showing a training accuracy of 98.9% and validation accuracy of 96%.
 
-![Accuracy Result](SoilTypeAccuracyCurve.jpg)
+![Accuracy Result](Images/SoilTypeAccuracyCurve.jpg)
 
-![Confusion Matrix Result](SoilTypeConfusionMatrix.jpg)
+![Confusion Matrix Result](Images/SoilTypeConfusionMatrix.jpg)
 
-![Image Testing result](SoilTypeImageTesting.jpg)
+![Image Testing result](Images/SoilTypeImageTesting.jpg)
 
