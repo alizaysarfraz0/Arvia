@@ -8,7 +8,7 @@ This is a final year project for my bachelors in software engineeering.
 
 2. Secondly, after the approval the application prototype was created and the sensors needed had been mapped.
 
-3. The Application is a Blazor APP.
+3. The Application is a Blazor APP, it can be built and run using the command "dotnet watch run" in the terminal.
 
 ![Arvia Application](Images/ArviaApplication.png)
 
