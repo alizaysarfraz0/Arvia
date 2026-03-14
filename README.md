@@ -8,7 +8,7 @@ This is a final year project for my bachelors in software engineeering.
 
 2. Secondly, after the approval the application prototype was created and the sensors needed had been mapped.
 
-3. The Front-End of the application was created using React.
+3. The Application is a Blazor APP.
 
 ![Arvia Application](Images/ArviaApplication.png)
 
