@@ -23,3 +23,21 @@ models/
 
 .DS_Store
 Thumbs.db
+
+# .NET Build artifacts
+**/bin/
+**/obj/
+
+# visual code
+.vs/
+.vscode/
+*.user
+*.suo
+
+# database 
+*.mdf
+*.ldf
+**/ArviaDB.mdf
+
+# Environment secrets
+appsettings.Development.json
