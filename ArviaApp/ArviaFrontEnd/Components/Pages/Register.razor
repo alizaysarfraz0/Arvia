@@ -1,24 +1,172 @@
 @page "/register"
+@rendermode InteractiveServer 
+@using ArviaFrontEnd.Models
+@using Microsoft.AspNetCore.Components.Forms
 @layout Layout.EmptyLayout
+@inject HttpClient Http
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
+<style>
+    .auth-container {
+        background-color: #5b8c5a; 
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 3rem 2rem;
+        font-family: 'Poppins', sans-serif;
+        color: #e2f0d9;
+    }
 
-<div class="page-container">
-    
-    <div class="white-header-section">
-        <img src="images/Arvia.png" alt="Arvia Logo" style="width: 380px; height: auto; object-fit: contain;" />
+    .logo-section {
+        margin-bottom: 2rem;
+        margin-top: 2rem;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .auth-header h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .auth-header p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .auth-form {
+        width: 100%;
+        max-width: 350px;
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+
+    .arvia-input {
+        background-color: #4a7549; 
+        border: none;
+        border-radius: 50px;
+        padding: 1.2rem;
+        color: white;
+        font-size: 1rem;
+        text-align: center;
+        outline: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .arvia-input::placeholder {
+        color: #a8cfa7;
+    }
+
+    .arvia-input:focus {
+        background-color: #3f663e;
+    }
+
+    .arvia-btn-primary {
+        background-color: #d1e2c4; 
+        color: #2c4c2d;
+        border: none;
+        border-radius: 50px;
+        padding: 1.2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 1rem;
+        cursor: pointer;
+        transition: transform 0.1s ease, opacity 0.2s ease;
+    }
+
+    .arvia-btn-primary:active {
+        transform: scale(0.98);
+    }
+
+    .arvia-btn-primary:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .auth-footer {
+        margin-top: 2rem;
+        font-size: 0.9rem;
+    }
+
+    .auth-footer a {
+        color: #2c4c2d;
+        font-weight: 700;
+        text-decoration: none;
+    }
+</style>
+
+<div class="auth-container">
+    <div class="logo-section">
+        <img src="images/Arvia.png" alt="Arvia Logo" style="width: 280px; height: auto; object-fit: contain;" />
     </div>
 
-    <div class="content-section">
-        <h1 class="arvia-title">Create Account</h1>
-        <p class="arvia-subtitle">Join the Arvia community</p>
+    <div class="auth-header">
+        <h2>Create Account</h2>
+        <p>Join the Arvia community</p>
+    </div>
 
-        <input type="text" class="arvia-input" placeholder="Choose Name" />
-        <input type="password" class="arvia-input" placeholder="Password" />
-        <input type="password" class="arvia-input" placeholder="Confirm Password" />
+<EditForm Model="@registerModel" OnValidSubmit="HandleRegistration" class="auth-form" FormName="registerForm">
+        <DataAnnotationsValidator />
 
-        <button class="arvia-btn-primary">Register</button>
+        <InputText @bind-Value="registerModel.Email" type="email" placeholder="Email Address" class="arvia-input" />
+        <ValidationMessage For="@(() => registerModel.Email)" style="color: #ffcccc; font-size: 0.8rem; text-align: center; margin-top: -10px;" />
+        
+        <InputText @bind-Value="registerModel.Password" type="password" placeholder="Password" class="arvia-input" />
+        <ValidationMessage For="@(() => registerModel.Password)" style="color: #ffcccc; font-size: 0.8rem; text-align: center; margin-top: -10px;" />
+        
+        <input type="password" placeholder="Confirm Password" class="arvia-input" />
 
-        <div class="arvia-link">
-            Already have an account? <a href="/">Log In</a>
-        </div>
-        </div>
+        <button type="submit" class="arvia-btn-primary" disabled="@isLoading">
+            @(isLoading ? "Registering..." : "Register")
+        </button>
+
+    </EditForm>
+
+    <div class="auth-footer">
+        <p>Already have an account? <a href="/login">Log In</a></p>
+    </div>
 </div>
+
+@code {
+    private RegisterModel registerModel = new RegisterModel();
+    private bool isLoading = false;
+
+    private async Task HandleRegistration()
+    {
+        isLoading = true;
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("http://localhost:5154/api/Auth/register", registerModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // 1. Show Success Pop-up!
+                await JS.InvokeVoidAsync("alert", "Success! You have been registered. Please log in.");
+                
+                // 2. Safely redirect to login
+                NavManager.NavigateTo("/login");
+            }
+            else
+            {
+                // 3. Show Error Pop-up with the strict backend rules!
+                await JS.InvokeVoidAsync("alert", "Registration Failed.\n\nPlease ensure:\n- Your email is valid.\n- Password is at least 8 characters.\n- Password has at least 1 Capital Letter.\n- Password has at least 1 Number and 1 Symbol (!, @, #, etc).");
+            }
+        }
+        catch (Exception)
+        {
+            await JS.InvokeVoidAsync("alert", "Could not connect to the server. Is your backend running?");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

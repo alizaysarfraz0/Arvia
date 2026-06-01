@@ -1,5 +1,12 @@
 @page "/"
+@page "/login"
+@rendermode InteractiveServer 
+@using ArviaFrontEnd.Models
+@using Microsoft.AspNetCore.Components.Forms
 @layout Layout.EmptyLayout
+@inject HttpClient Http
+@inject NavigationManager NavManager
+@inject IJSRuntime JS
 
 <div class="page-container">
     
@@ -11,15 +18,82 @@
         <h1 class="arvia-title" style="font-size: 2rem;">Login</h1>
         <p class="arvia-subtitle">Sign in to continue</p>
 
-        <input type="text" class="arvia-input" placeholder="Name" />
-        <input type="password" class="arvia-input" placeholder="Password" />
+        <EditForm Model="@loginModel" OnValidSubmit="() => HandleLogin(false)" FormName="loginForm">
+            <DataAnnotationsValidator />
 
-        <a href="/dashboard" class="arvia-btn-primary" style="text-decoration:none; text-align:center; display: block; box-sizing: border-box;">
-            Log In
-        </a>
+            <div style="margin-bottom: 1rem;">
+                <InputText @bind-Value="loginModel.Email" type="email" class="arvia-input" placeholder="Email Address" style="width: 100%;" />
+            </div>
 
-        <div class="arvia-link">
-            No Account? <a href="/register">register</a>
+            <div style="margin-bottom: 1rem;">
+                <InputText @bind-Value="loginModel.Password" type="password" class="arvia-input" placeholder="Password" style="width: 100%;" />
+            </div>
+
+            <button type="submit" class="arvia-btn-primary" disabled="@isLoading" style="width: 100%; border: none; cursor: pointer; margin-top: 1rem;">
+                @(isLoading ? "Logging in..." : "Log In")
+            </button>
+            @if (showForceLoginPrompt)
+            {
+                <div style="margin-top: 1rem; padding: 10px; background-color: #fff3cd; border: 1px solid #ffeeba; border-radius: 5px; text-align: center;">
+                    <p style="color: #856404; margin-bottom: 10px;">⚠️ You are already logged in on another device.</p>
+                    <button type="button" @onclick="() => HandleLogin(true)" class="arvia-btn-primary" style="background-color: #dc3545; width: 100%; border: none; cursor: pointer;">
+                        Force Logout Other Device & Login Here
+                    </button>
+                </div>
+            }
+        </EditForm>
+
+        <div class="arvia-link" style="margin-top: 1.5rem; text-align: center;">
+            No Account? <a href="/register">Register</a>
         </div>
     </div>
 </div>
+
+@code {
+    private LoginModel loginModel = new LoginModel();
+    private bool isLoading = false;
+    private bool showForceLoginPrompt = false; //Controls showing the "Force Login" UI
+
+    private async Task HandleLogin(bool force = false)
+    {
+        isLoading = true;
+
+        try
+        {
+            // Determine which endpoint to hit
+            var endpoint = force ? "http://localhost:5154/api/Auth/force-login" : "http://localhost:5154/api/Auth/login";
+            var response = await Http.PostAsJsonAsync(endpoint, loginModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var authResult = await response.Content.ReadFromJsonAsync<AuthResponse>();
+                
+                if (authResult != null && !string.IsNullOrWhiteSpace(authResult.Token))
+                {
+                    await JS.InvokeVoidAsync("localStorage.setItem", "authToken", authResult.Token);
+                    await Task.Delay(500); 
+                    NavManager.NavigateTo("/dashboard");
+                    return; 
+                }
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Conflict) 
+            {
+                //The backend said they are already logged in
+                showForceLoginPrompt = true; 
+            }
+            else 
+            {
+                await JS.InvokeVoidAsync("alert", "❌ Wrong email or password. Please try again.");
+            }
+        }
+        catch (Exception)
+        {
+            await JS.InvokeVoidAsync("alert", "Could not connect to the server. Is your backend running?");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged(); // Telling Blazor to update the UI
+        }
+    }
+}

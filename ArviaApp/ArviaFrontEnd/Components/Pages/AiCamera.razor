@@ -1,33 +1,124 @@
 @page "/camera"
+@inject HttpClient Http
+@rendermode InteractiveServer
 @layout Layout.EmptyLayout
-<div class="page-container" style="background-color: var(--arvia-green-dark);">
-    <div class="camera-header">
-        <a href="/dashboard" style="color: var(--arvia-white); text-decoration: none;">← Back</a>
-        <h2 style="color: var(--arvia-white); margin: 0;">AI Scanner</h2>
-        <div style="width: 40px;"></div> </div>
+@inject IJSRuntime JS
+@inject NavigationManager NavManager
+@using System.Text.Json.Serialization
 
-    <div class="camera-view-container">
-        <div class="camera-placeholder">
-            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-            <p>Camera Active</p>
+<style>
+    .camera-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; background-color: var(--arvia-green-light); }
+    .camera-view-container { position: relative; width: 100%; height: 50vh; background-color: #000; overflow: hidden; }
+    .ai-bubble { position: absolute; background-color: #023210; padding: 0.8rem 1.2rem; border-radius: 30px; color: var(--arvia-green-light); font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: all 0.3s ease; }
+    .ai-results-panel { flex-grow: 1; background-color: var(--arvia-white); border-top-left-radius: 30px; border-top-right-radius: 30px; padding: 2rem; margin-top: -20px; position: relative; z-index: 10; }
+    .result-item { margin-bottom: 1.5rem; }
+    .result-label { display: block; font-size: 0.9rem; color: #666; margin-bottom: 0.3rem; }
+    .result-value { font-size: 1.4rem; font-weight: 700; color: var(--arvia-green-light); }
+    .warning .result-value { color: #b3cd7e; }
+    .pulse { animation: pulseAnim 1.5s infinite; }
+    @@keyframes pulseAnim { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+</style>
+
+@if (!isAuthenticated)
+{
+    <div style="height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: var(--arvia-green-dark); color: var(--arvia-white);">
+        <h2>🔒 Access Denied</h2>
+        <a href="/login" style="color: #d1e2c4; font-weight: 700; margin-top: 1.5rem;">Click here to Log In</a>
+    </div>
+}
+else
+{
+    <div class="page-container" style="background-color: var(--arvia-green-dark); display: flex; flex-direction: column; height: 100vh;">
+        <div class="camera-header">
+            <a href="/dashboard" style="color: var(--arvia-white); text-decoration: none;">← Back</a>
+            <h2 style="color: var(--arvia-white); margin: 0;">Live Scanner</h2>
+            <a href="/upload-scan" style="background-color: var(--arvia-white); color: var(--arvia-green-dark); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; text-decoration: none;">
+                Upload Photo
+            </a>
         </div>
 
-        <div class="ai-bubble pop-in" style="top: 20%; left: 15%;">
-            <span>Leaf Spot Detected</span>
+        <div class="camera-view-container">
+            <video id="videoFeed" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+
+            @if (isAnalyzing)
+            {
+                <div class="ai-bubble pulse" style="top: 20%; left: 15%;">
+                    <span>Scanning...</span>
+                </div>
+            }
         </div>
-         <div class="ai-bubble pop-in" style="top: 60%; right: 20%; animation-delay: 0.5s;">
-            <span>Checking Soil Texture...</span>
+
+        <div class="ai-results-panel">
+            <div class="result-item">
+                <span class="result-label">Live Soil Match:</span>
+                <span class="result-value">@currentSoilType</span>
+            </div>
+            <div class="result-item warning">
+                <span class="result-label">Health Status:</span>
+                <span class="result-value">@currentHealth</span>
+            </div>
         </div>
     </div>
+}
 
-    <div class="ai-results-panel">
-        <div class="result-item">
-            <span class="result-label">Soil Type Detected:</span>
-            <span class="result-value">Loamy Sand</span>
-        </div>
-        <div class="result-item warning">
-            <span class="result-label">Plant Disease:</span>
-            <span class="result-value">Early Blight Signs</span>
-        </div>
-    </div>
-</div>
+@code {
+    private bool isAuthenticated = false;
+    private bool isAnalyzing = true;
+    private string currentSoilType = "Analyzing...";
+    private string currentHealth = "Looking for plants...";
+
+    public class AiPrediction
+    {
+        [JsonPropertyName("soilType")]
+        public string SoilType { get; set; } = "Unknown";
+
+        [JsonPropertyName("healthStatus")]
+        public string HealthStatus { get; set; } = "Unknown";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await JS.InvokeAsync<string>("localStorage.getItem", "authToken");
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                isAuthenticated = true;
+                StateHasChanged();
+
+                var objRef = DotNetObjectReference.Create(this);
+                await Task.Delay(100);
+                await JS.InvokeVoidAsync("cameraInterop.startCamera", "videoFeed", objRef);
+            }
+        }
+    }
+
+    [JSInvokable]
+    public async Task ProcessLiveFrame(string base64Image)
+    {
+        try
+        {
+            var payload = new { image = base64Image };
+            var response = await Http.PostAsJsonAsync("http://127.0.0.1:8000/predict-base64", payload);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var prediction = await response.Content.ReadFromJsonAsync<AiPrediction>();
+                if (prediction != null)
+                {
+                    currentSoilType = prediction.SoilType;
+                    currentHealth = prediction.HealthStatus;
+                    isAnalyzing = false;
+                }
+            }
+        }
+        catch (Exception)
+        {
+            // silent fail on live frames
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+}

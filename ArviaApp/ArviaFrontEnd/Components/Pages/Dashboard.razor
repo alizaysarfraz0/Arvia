@@ -1,61 +1,170 @@
 @page "/dashboard"
-@using ArviaApp.Services
+@rendermode InteractiveServer
+@implements IDisposable
+@using ArviaFrontEnd.Models
 @layout Layout.EmptyLayout
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject NavigationManager NavManager
 
-@inject ISensorService SensorService
+<style>
+    .sensor-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; width: 100%; max-width: 400px; margin-bottom: 2rem; }
+    .sensor-card { background-color: var(--arvia-green-dark); padding: 1.5rem; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--arvia-green-light); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    .sensor-label { font-weight: 500; font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .sensor-value { font-size: 1.8rem; font-weight: 700; }
+    .recommendations-panel { width: 100%; max-width: 400px; background-color: var(--arvia-green-medium); padding: 1.5rem; border-radius: 20px; color: var(--arvia-green-light); }
+    .recommendations-panel ul { padding-left: 1.2rem; }
+    .recommendations-panel li { margin-bottom: 0.8rem; line-height: 1.4; }
+    
+    /* Logout Button Styling */
+    .logout-btn {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background-color: #e74c3c; 
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        z-index: 1000; 
+        transition: background-color 0.2s ease;
+    }
+    .logout-btn:hover {
+        background-color: #c0392b;
+    }
+</style>
 
-<div class="page-container" style="background-color: var(--arvia-white);">
-    <div class="content-section">
-        <h1 class="arvia-title">Garden Status</h1>
-        <p class="arvia-subtitle">Real-time sensor readings</p>
-
-        @if (reading == null)
-        {
-            <p style="color: var(--arvia-green-dark);">Reading sensors...</p>
-        }
-        else
-        {
-            <div class="sensor-grid">
-                <div class="sensor-card">
-                    <span class="sensor-label">pH Level</span>
-                    <span class="sensor-value">@reading.PHLevel.ToString("0.0")</span>
-                </div>
-                <div class="sensor-card">
-                    <span class="sensor-label">Humidity</span>
-                    <span class="sensor-value">@reading.HumidityPercent.ToString("0")%</span>
-                </div>
-                <div class="sensor-card">
-                    <span class="sensor-label">Moisture</span>
-                    <span class="sensor-value">@reading.SoilMoisturePercent.ToString("0")%</span>
-                </div>
-                <div class="sensor-card">
-                    <span class="sensor-label">Temp</span>
-                    <span class="sensor-value">@reading.TemperatureCelsius.ToString("0")°C</span>
-                </div>
-            </div>
-
-            <div class="recommendations-panel">
-                <h3 class="arvia-title">Insights & Actions</h3>
-                <ul>
-                    @foreach (var rec in reading.Recommendations)
-                    {
-                        <li>@rec</li>
-                    }
-                </ul>
-            </div>
-        }
-
-       <a href="/camera" class="arvia-btn-primary" style="text-decoration:none; text-align:center; margin-top: 2rem; margin-bottom: 2rem;">
-    Open AI Scanner
-          </a>
+@if (!isAuthenticated)
+{
+      <div style="height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background-color: var(--arvia-green-dark); color: var(--arvia-white); font-family: 'Poppins', sans-serif;">
+        <h2 style="margin-bottom: 0.5rem;">Access Denied</h2>
+        <p style="color: #a8cfa7;">You must be logged in to use the AI Scanner.</p>
+        
+        <a href="/login" style="color: #d1e2c4; font-weight: 700; text-decoration: underline; font-size: 1.2rem; margin-top: 1.5rem;">
+            Click here to Log In
+        </a>
     </div>
-</div>
+}
+else
+{
+    <div class="page-container" style="background-color: var(--arvia-white);">
+        <div class="content-section">
+            <h1 class="arvia-title">Garden Status</h1>
+            <p class="arvia-subtitle">Real-time sensor readings</p>
+
+            @if (reading == null)
+            {
+                <p style="color: var(--arvia-green-dark);">Fetching live data...</p>
+            }
+            else
+            {
+                <div class="sensor-grid">
+                    <div class="sensor-card">
+                        <span class="sensor-label">pH Level</span>
+                        <span class="sensor-value">@reading.PhLevel.ToString("0.0")</span>
+                    </div>
+                    <div class="sensor-card">
+                        <span class="sensor-label">Humidity</span>
+                        <span class="sensor-value">@reading.Humidity.ToString("0")%</span>
+                    </div>
+                    <div class="sensor-card">
+                        <span class="sensor-label">Moisture</span>
+                        <span class="sensor-value">@reading.SoilMoisture.ToString("0")%</span>
+                    </div>
+                    <div class="sensor-card">
+                        <span class="sensor-label">Temp</span>
+                        <span class="sensor-value">@reading.Temperature.ToString("0")°C</span>
+                    </div>
+                </div>
+
+                <div class="recommendations-panel">
+                    <h3 class="arvia-title">Insights & Actions</h3>
+                    <ul>
+                        @foreach (var rec in GetRecommendations(reading))
+                        {
+                            <li>@rec</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+           <a href="/camera" class="arvia-btn-primary" style="text-decoration:none; text-align:center; margin-top: 2rem; margin-bottom: 2rem;">
+               Open AI Scanner
+           </a>
+           
+           <button class="logout-btn" @onclick="Logout">
+                Log Out
+           </button>
+        </div>
+    </div>
+}
 
 @code {
     private SensorReading? reading;
+    private bool isAuthenticated = false;
+    private System.Threading.Timer? _pollingTimer;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        reading = await SensorService.GetLatestReadingAsync();
+        if (firstRender)
+        {
+            var token = await JS.InvokeAsync<string>("localStorage.getItem", "authToken");
+            
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                NavManager.NavigateTo("/login");
+            }
+            else
+            {
+                isAuthenticated = true;
+                StateHasChanged(); 
+                await FetchSensorData();
+
+                // Poll for new ESP32 data every 5 seconds
+                _pollingTimer = new System.Threading.Timer(async _ =>
+                {
+                    await FetchSensorData();
+                    await InvokeAsync(StateHasChanged);
+                }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+            }
+        }
+    }
+
+    private async Task FetchSensorData()
+    {
+        try
+        {
+            reading = await Http.GetFromJsonAsync<SensorReading>("http://localhost:5154/api/sensors/latest");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching data: {ex.Message}");
+        }
+    }
+
+    private List<string> GetRecommendations(SensorReading data)
+    {
+        var recs = new List<string>();
+        if (data.SoilMoisture < 30) recs.Add("💧 Soil is dry. Consider turning on irrigation.");
+        else recs.Add("✅ Soil moisture is currently optimal.");
+        if (data.Temperature > 30) recs.Add("🌡️ High heat detected. Monitor crops for stress.");
+        if (data.PhLevel < 6.0) recs.Add("🧪 pH is slightly acidic. Monitor nutrient uptake.");
+        if (recs.Count == 1) recs.Add("🌱 No critical actions required right now.");
+        return recs;
+    }
+
+    private async Task Logout()
+    {
+        _pollingTimer?.Dispose();
+        await JS.InvokeVoidAsync("localStorage.removeItem", "authToken");
+        NavManager.NavigateTo("/login", forceLoad: true);
+    }
+
+    public void Dispose()
+    {
+        _pollingTimer?.Dispose();
     }
 }

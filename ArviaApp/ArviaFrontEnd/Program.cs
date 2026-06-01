@@ -1,11 +1,14 @@
-using ArviaApp.Components;
+using ArviaFrontEnd.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Adding services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddScoped<ArviaApp.Services.ISensorService, ArviaApp.Services.MockSensorService>();
+// This gives Blazor the ability to make API calls
+builder.Services.AddHttpClient(); 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
